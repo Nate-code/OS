@@ -1,0 +1,242 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="">
+    <title>OS</title>
+    <style>
+        #os {
+            height: 100%;
+            width: 100%;
+            display: none;
+        }
+        #app {
+            position: absolute;
+            height: 50%;
+            width: 50%;
+            background-color: blue;
+        }
+        #loginpage {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: black;
+        }
+        #logindiv {
+            background-color: mediumspringgreen;
+            height: 50%;
+            width: 400px;
+            margin: auto;
+        }
+        #screensaver {
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: none;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #screensaverimage {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="loginpage">
+        <img id="screensaverimage" src="https://www.w3schools.com/w3css/img_lights.jpg">
+        <div id="screensaver">
+            <div id="logindiv">        
+                <h2 id="loginpagewelcome"></h2>
+                <input id="logintext" type="password">
+                <button id="loginbutton">Login</button>
+                <button id="addaccountbutton">Modify Account</button>
+                <p id="showpasswordwrong"></p>
+            </div>
+        </div>
+    </div>
+    <div id="os">
+        <div id="apppanel"></div>
+        <div id="osbody">
+            <div id="app" draggable="true">
+                <div id="appbar">
+                    <div id="exitwindow">X</div>
+                    <div id="expandwindow">O</div>
+                </div>
+                <div id="appcontent"></div>
+            </div>
+        </div>
+        <div id="mainpanel">
+            <div id="clock">
+                <p id="clockinput"></p>
+            </div>
+        </div>
+    </div>
+    <script>
+        var loginpage = document.getElementById("loginpage");
+        var os = document.getElementById("os");
+
+        localStorage.username;
+        localStorage.password;
+
+        var logintext = document.getElementById("logintext");
+        var loginbutton = document.getElementById("loginbutton");
+
+        var loginvalue;
+        var encryptionvalue;
+
+        var modaccountbutton = document.getElementById("addaccountbutton");
+
+        var loginpagewelcome = document.getElementById("loginpagewelcome");
+        var showpasswordwrong = document.getElementById("showpasswordwrong");
+
+        var screensaver = document.getElementById("screensaver");
+        var screensaverimage = document.getElementById("screensaverimage");    
+
+        if (localStorage.username === undefined) {
+            localStorage.username = "New User";
+        }
+
+        if (localStorage.password === undefined) {
+            localStorage.password = "Password";
+        }
+
+        loginpagewelcome.innerHTML = "Welcome" + " " + localStorage.username;
+
+        loginpage.addEventListener("mousedown", function() {
+            screensaver.style.display = "block";
+        });
+
+        loginbutton.addEventListener("click", function() {
+            loginvalue = logintext.value; 
+            if (loginvalue == localStorage.password) {
+                login();
+            } else {
+                loginincorrect();
+            }
+        });
+
+        function login() {
+            loginpage.style.display = "none";
+            os.style.display = "block";
+        }
+
+        function loginincorrect() {
+            logintext.value = "";
+
+            showpasswordwrong.innerText = "*Password Incorrect";
+        }
+        
+        var currentpassword = localStorage.password;
+        var newusername;
+        var newpassword;
+
+        modaccountbutton.addEventListener("click", function() {
+            modaccount()
+        });
+
+        function modaccount () {
+            if (localStorage.password === undefined) {
+            } else {
+                varifyuser()
+            }
+        }
+
+        var varifyuserwrong;
+
+        function varifyuser() {
+            var userpassword = window.prompt("Enter Current Password");
+
+            if (userpassword == localStorage.password) {
+                modifyaccount();
+            } else {
+                alert("Password Incorect");
+
+                location.reload();
+            }
+        }
+
+        function lockscreen () {
+            loginpage.style.display = "block";
+            os.style.display = "none";
+        }
+
+        function modifyaccount() {
+            var newusername = window.prompt("Enter New Username") 
+            var newpassword = window.prompt("Enter New Password");
+            localStorage.username = newusername;
+            localStorage.password = newpassword;
+
+            localStorage.hasusername = true;
+            localStorage.haspassword = true;
+
+            loginpagewelcome.innerText = "Welcome" + " " + localStorage.username;
+        }
+
+        var clockinput = document.getElementById("clockinput");
+
+        var clockhvalue = new Date().getHours();
+        var clockmvalue = new Date().getMinutes();
+
+        loginpagewelcome.innerHTML = "Welcome" + " " + localStorage.username;
+
+        function liveclock () {
+            clockinput.innerText = clockhvalue + ":" + clockmvalue;
+        }
+
+        var clock = setInterval(liveclock, 1);
+
+        var app = document.getElementById("app");
+
+        var exitwindow = document.getElementById("exitwindow");
+        var expandwindow = document.getElementById("expandwindow");
+
+        exitwindow.addEventListener("click", function () {
+            app.style.display = "none";
+        });
+
+        expandwindow.addEventListener
+
+        dragElement(document.getElementById("app"));
+
+        function dragElement(elmnt) {
+            var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            if (document.getElementById(elmnt.id + "header")) {
+                document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+            } else {
+                elmnt.onmousedown = dragMouseDown;
+            }
+        
+            function dragMouseDown(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }
+
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
+    </script>
+</body>
+</html>
