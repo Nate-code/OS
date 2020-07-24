@@ -10,11 +10,17 @@
             width: 100%;
             display: none;
         }
-        #app {
+        #browserapp {
             position: absolute;
             height: 50%;
             width: 50%;
-            background-color: blue;
+            background-color: black;
+        }
+        #appbar {
+            background-color: white;
+        }
+        #appbarstuff {
+            float: right;
         }
         #loginpage {
             height: 100%;
@@ -28,6 +34,9 @@
             height: 50%;
             width: 400px;
             margin: auto;
+        }
+        #showpasswordwrong {
+            color: red;
         }
         #screensaver {
             position: absolute;
@@ -51,11 +60,15 @@
     <div id="loginpage">
         <img id="screensaverimage" src="https://www.w3schools.com/w3css/img_lights.jpg">
         <div id="screensaver">
-            <div id="logindiv">        
+            <div id="logindiv">
                 <h2 id="loginpagewelcome"></h2>
                 <input id="logintext" type="password">
-                <button id="loginbutton">Login</button>
-                <button id="addaccountbutton">Modify Account</button>
+                <nav>
+                    <button id="loginbutton">Login</button>
+                    <button id="addaccountbutton">Modify Account</button>
+                    <button id="showpassword">Show Password</button>
+                    <button id="cancellogin">Cancel</button>
+                </nav>
                 <p id="showpasswordwrong"></p>
             </div>
         </div>
@@ -63,11 +76,12 @@
     <div id="os">
         <div id="apppanel"></div>
         <div id="osbody">
-            <div id="app" draggable="true">
+            <div class="app "id="browserapp" draggable="true">
                 <div id="appbar">
-                    <div id="exitwindow">X</div>
-                    <div id="expandwindow">O</div>
+                    <button class="appbarstuff" id="exitwindow">X</<button>
+                    <button class="appbarstuff" id="expandwindow">O</<button>
                 </div>
+                <div></div>
                 <div id="appcontent"></div>
             </div>
         </div>
@@ -78,6 +92,7 @@
         </div>
     </div>
     <script>
+
         var loginpage = document.getElementById("loginpage");
         var os = document.getElementById("os");
 
@@ -86,6 +101,9 @@
 
         var logintext = document.getElementById("logintext");
         var loginbutton = document.getElementById("loginbutton");
+
+        var showpassword = document.getElementById("showpassword");
+        var cancellogin = document.getElementById("cancellogin");
 
         var loginvalue;
         var encryptionvalue;
@@ -96,7 +114,7 @@
         var showpasswordwrong = document.getElementById("showpasswordwrong");
 
         var screensaver = document.getElementById("screensaver");
-        var screensaverimage = document.getElementById("screensaverimage");    
+        var screensaverimage = document.getElementById("screensaverimage");
 
         if (localStorage.username === undefined) {
             localStorage.username = "New User";
@@ -113,10 +131,20 @@
         });
 
         loginbutton.addEventListener("click", function() {
-            loginvalue = logintext.value; 
+            loginvalue = logintext.value;
             if (loginvalue == localStorage.password) {
                 login();
             } else {
+                loginincorrect();
+            }
+        });
+
+        logintext.addEventListener("keydown", function(event) {
+            var logintextkey = event.keyCode;
+
+            if (logintextkey == 13 && logintext.value == localStorage.password) {
+                login();
+            } else if (logintextkey == 13 && logintext.value != localStorage.password) {
                 loginincorrect();
             }
         });
@@ -131,7 +159,19 @@
 
             showpasswordwrong.innerText = "*Password Incorrect";
         }
-        
+
+        showpassword.addEventListener("click", function() {
+            logintext.type = "text";
+
+            setTimeout(() => {
+                logintext.type = "password";
+            }, 1000);
+        });
+
+        cancellogin.addEventListener("click", function() {
+            screensaver.style.display = "none";
+        });
+
         var currentpassword = localStorage.password;
         var newusername;
         var newpassword;
@@ -167,7 +207,7 @@
         }
 
         function modifyaccount() {
-            var newusername = window.prompt("Enter New Username") 
+            var newusername = window.prompt("Enter New Username")
             var newpassword = window.prompt("Enter New Password");
             localStorage.username = newusername;
             localStorage.password = newpassword;
@@ -191,7 +231,15 @@
 
         var clock = setInterval(liveclock, 1);
 
-        var app = document.getElementById("app");
+        var appwindowdisplay;
+        var appwindowmax;
+
+        appwindowdisplay = true;
+        appwindowmax = false;
+
+        var app = document.getElementsByClassName("app");
+
+        var browserapp = document.getElementById("browserapp");
 
         var exitwindow = document.getElementById("exitwindow");
         var expandwindow = document.getElementById("expandwindow");
@@ -200,43 +248,68 @@
             app.style.display = "none";
         });
 
-        expandwindow.addEventListener
+        function windowsizemax() {
+            app.style.width = "100%";
+            rapp.style.height = "100%";
 
-        dragElement(document.getElementById("app"));
+            appwindowmax = true;
+        }
 
-        function dragElement(elmnt) {
-            var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-            if (document.getElementById(elmnt.id + "header")) {
-                document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
-            } else {
-                elmnt.onmousedown = dragMouseDown;
+        function windowsizemin() {
+            app.style.width = "50%";
+            app.style.height = "50%";
+
+            appwindowmax = false;
+        }
+
+        expandwindow.addEventListener("click", function() {
+            if (appwindowmax) {
+                windowsizemin();
+            } else if (!appwindowmax) {
+                windowsizemax();
             }
-        
-            function dragMouseDown(e) {
-                e = e || window.event;
-                e.preventDefault();
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                document.onmouseup = closeDragElement;
-                document.onmousemove = elementDrag;
-            }
+        });
 
-            function elementDrag(e) {
-                e = e || window.event;
-                e.preventDefault();
-                pos1 = pos3 - e.clientX;
-                pos2 = pos4 - e.clientY;
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-            }
+        function browser() {
+            dragElement(document.getElementById("browserapp"));
 
-            function closeDragElement() {
-                document.onmouseup = null;
-                document.onmousemove = null;
+            function dragElement(elmnt) {
+                var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+                if (document.getElementById(elmnt.id + "header")) {
+                    document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+                } else {
+                    elmnt.onmousedown = dragMouseDown;
+                }
+
+                function dragMouseDown(e) {
+                    e = e || window.event;
+                    e.preventDefault();
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    document.onmouseup = closeDragElement;
+                    document.onmousemove = elementDrag;
+                }
+
+                function elementDrag(e) {
+                    e = e || window.event;
+                    e.preventDefault();
+                    pos1 = pos3 - e.clientX;
+                    pos2 = pos4 - e.clientY;
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+                }
+
+                function closeDragElement() {
+                    document.onmouseup = null;
+                    document.onmousemove = null;
+                }
             }
         }
+
+        browser();
+
     </script>
 </body>
 </html>
