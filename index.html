@@ -10,17 +10,21 @@
             width: 100%;
             display: none;
         }
+        .app {
+
+        }
+        .appbar {
+            background-color: grey;
+        }
+        .appbarstuff {
+            display: inline-block;
+            float: right;
+        }
         #browserapp {
             position: absolute;
             height: 50%;
             width: 50%;
             background-color: black;
-        }
-        #appbar {
-            background-color: white;
-        }
-        #appbarstuff {
-            float: right;
         }
         #loginpage {
             height: 100%;
@@ -54,9 +58,34 @@
             width: 100%;
             height: 100%;
         }
+        #initialsetup {
+
+        }
+        #initialsetupusername {
+            display: none;
+        }
+        #initialsetuppassword {
+            display: none;
+        }
     </style>
 </head>
 <body>
+    <div id="initialsetup">
+        <div id="firstwelcomescreen">
+            <h1>Initial Setup</h1>
+            <button id="startinitialsetup">Start Initial Setup</button>
+        </div>
+        <div id="initialsetupusername">
+            <h1>Setup Username</h1>
+            <input id="setupusername" type="text">
+            <button id="usernamenext">Next</button>
+        </div>
+        <div id="initialsetuppassword">
+            <h1>Setup Password</h1>
+            <input id="setuppassword" type="text">
+            <button id="passwordnext">Next</button>
+        </div>
+    </div>
     <div id="loginpage">
         <img id="screensaverimage" src="https://www.w3schools.com/w3css/img_lights.jpg">
         <div id="screensaver">
@@ -76,13 +105,22 @@
     <div id="os">
         <div id="apppanel"></div>
         <div id="osbody">
-            <div class="app "id="browserapp" draggable="true">
-                <div id="appbar">
-                    <button class="appbarstuff" id="exitwindow">X</<button>
-                    <button class="appbarstuff" id="expandwindow">O</<button>
+            <div class="app" id="browserapp">
+                <div class="appbar">
+                    <button class="appbarstuff" id="exitwindow">X</button>
+                    <button class="appbarstuff" id="expandwindow">O</button>
                 </div>
                 <div></div>
-                <div id="appcontent"></div>
+                <div id="appcontent">
+                    <div id="browsersearchdiv">
+                        <div></div>
+                        <button></button>
+                        <input id="browsersearchbar" type="text">
+                    </div>
+                    <div id="browserwelcomescreen"></div>
+                    <div id="browsernewtab"></div>
+                    <iframe id="browseriframe" width="100" height="100"></iframe>
+                </div>
             </div>
         </div>
         <div id="mainpanel">
@@ -92,12 +130,10 @@
         </div>
     </div>
     <script>
+        localStorage.sitevisited;
 
         var loginpage = document.getElementById("loginpage");
         var os = document.getElementById("os");
-
-        localStorage.username;
-        localStorage.password;
 
         var logintext = document.getElementById("logintext");
         var loginbutton = document.getElementById("loginbutton");
@@ -116,12 +152,73 @@
         var screensaver = document.getElementById("screensaver");
         var screensaverimage = document.getElementById("screensaverimage");
 
-        if (localStorage.username === undefined) {
-            localStorage.username = "New User";
+        var initialsetup = document.getElementById("initialsetup");
+        var firstwelcomescreen = document.getElementById("firstwelcomescreen")
+        var initialsetupusername = document.getElementById("initialsetupusername");
+        var initialsetuppassword = document.getElementById("initialsetuppassword");
+
+        var usernamenext = document.getElementById("usernamenext");
+        var passwordnext = document.getElementById("passwordnext");
+
+        var startinitialsetup = document.getElementById("startinitialsetup");
+        var setupusername = document.getElementById("setupusername");
+        var setuppassword = document.getElementById("setuppassword");
+
+        startinitialsetup.addEventListener("click", function() {
+            firstwelcomescreen.style.display = "none";
+            initialsetupusername.style.display = "block";
+        });
+
+        usernamenext.addEventListener("click", firstsetupusername);
+
+        passwordnext.addEventListener("click", firstsetuppassword);
+
+
+        setupusername.addEventListener("keydown", function(event) {
+            var setupusernamekey = event.keyCode;
+
+            if (setupusernamekey == 13) {
+                firstnewusername();
+            }
+        });
+
+        setuppassword.addEventListener("keydown", function() {
+            var setuppasswordkey = event.keyCode;
+
+            if (setuppasswordkey == 13) {
+                firstsetuppassword();
+            }
+        });
+
+        function firstsetupusername() {
+            var firstnewusername = setupusername.value;
+            localStorage.username = firstnewusername;
+
+            initialsetupusername.style.display = "none";
+            initialsetuppassword.style.display = "block";
         }
 
-        if (localStorage.password === undefined) {
-            localStorage.password = "Password";
+        function firstsetuppassword() {
+            var firstnewpassword = setuppassword.value;
+            localStorage.password = firstnewpassword;
+
+            localStorage.sitevisited = true;
+
+            location.reload();
+        }
+
+        if (localStorage.sitevisited === undefined) {
+            initialsetupfun();
+        } else {
+            alreadysetup();
+        }
+
+        function initialsetupfun() {
+            loginpage.style.display = "none";
+        }
+
+        function alreadysetup() {
+            initialsetup.style.display = "none";
         }
 
         loginpagewelcome.innerHTML = "Welcome" + " " + localStorage.username;
@@ -270,45 +367,56 @@
             }
         });
 
-        function browser() {
-            dragElement(document.getElementById("browserapp"));
+        
 
-            function dragElement(elmnt) {
-                var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-                if (document.getElementById(elmnt.id + "header")) {
-                    document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
-                } else {
-                    elmnt.onmousedown = dragMouseDown;
+        
+        var browsersearchdiv = document.getElementById("browsersearchdiv")
+        var browsersearchbar = document.getElementById("browsersearchbar");
+        var browserwelcomescreen = document.getElementById("browserwelcomescreen");
+        var browsernewtab = document.getElementById("browsernewtab");
+        var browseriframe = document.getElementById("browseriframe");
+
+        browsersearchbar.addEventListener("keydown", function(event) {
+            var browsersearchbarkey = event.keyCode;
+
+            if (browsersearchbarkey == 13) {
+                function browsersearch(url) {
+                    browseriframe.src = url;  
                 }
 
-                function dragMouseDown(e) {
-                    e = e || window.event;
-                    e.preventDefault();
-                    pos3 = e.clientX;
-                    pos4 = e.clientY;
-                    document.onmouseup = closeDragElement;
-                    document.onmousemove = elementDrag;
-                }
+                function detectsearchtype() {
+                    var browsersearched = browsersearchbar.value;
 
-                function elementDrag(e) {
-                    e = e || window.event;
-                    e.preventDefault();
-                    pos1 = pos3 - e.clientX;
-                    pos2 = pos4 - e.clientY;
-                    pos3 = e.clientX;
-                    pos4 = e.clientY;
-                    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-                    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-                }
+                        isurl = null;
 
-                function closeDragElement() {
-                    document.onmouseup = null;
-                    document.onmousemove = null;
-                }
-            }
-        }
+                        browsersearchedhttp = browsersearched.slice(0, 6);
+                        browsersearchedhttps = browsersearched.slice(0, 7);
 
-        browser();
+                        browsersearchedwww = browsersearched.slice(0,2);
+
+                        var url;
+
+                        if (browsersearchedhttp == "http://" || browsersearchedhttps == "https://") {
+                            isurl = true;
+                        } else if (browsersearchedwww == "www") {
+                            isurl = true;
+                        } else {
+                            isurl = false;
+                        }
+
+                        if (isurl === false) {
+                            url = "https://www.google.com/search?source=hp&ei=snIcX42jMraD9PwPxZ2WuAg&q=" + browsersearched + "&oq=" + browsersearched + "&safe=active&ssui=on";
+
+                            browsersearch(url);
+                        } else if (isurl === true) {
+                            url = browsersearched;
+
+                            browsersearch(url);
+                        }
+                    }
+                }
+            });
+        
 
     </script>
 </body>
